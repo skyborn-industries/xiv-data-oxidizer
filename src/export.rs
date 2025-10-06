@@ -11,7 +11,7 @@ use crate::formatter::format_string;
 /// Generates a CSV extract for the given sheet and language
 pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), Box<dyn Error>> {
     // Set up the Input for parsing sestrings
-    let input = Input::new().with_global_parameter(1, String::from("Player Player")); // Player name: Last First
+    let input = Input::new().with_global_parameter(1, String::from("Player Player")); // Player name
 
     // Retrieve the field names based on EXDSchema
     let field_names = field_names(sheet_name)?;

@@ -3,7 +3,6 @@ use ironworks::sestring::{
     format::{Color, ColorUsage, Input, Style, Write, format},
 };
 
-/// Format an sestring with HTML tags
 pub fn format_string(string: &SeString, input: &Input) -> String {
     let mut writer = MarkdownWriter::default();
     let _ = format(string.as_ref(), &input, &mut writer);
@@ -23,7 +22,7 @@ impl Write for MarkdownWriter {
         Ok(())
     }
 
-    // Format styled text with HTML tags
+    // Format styled text with markdown
     fn set_style(&mut self, style: Style, _enabled: bool) -> Result<(), SeStringError> {
         let markdown = match style {
             Style::Bold => "**",
@@ -36,7 +35,7 @@ impl Write for MarkdownWriter {
         Ok(())
     }
 
-    // Just replace all of the color shenanigans with <b> tags
+    // Just replace all of the color shenanigans with bold markdown
     fn push_color(&mut self, usage: ColorUsage, _color: Color) -> Result<(), SeStringError> {
         if usage == ColorUsage::Foreground {
             self.buffer.push_str("**");
