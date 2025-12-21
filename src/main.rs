@@ -25,8 +25,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let path = Path::new(&config.path);
 
     let ironworks = Ironworks::new().with_resource(SqPack::new(Install::at(path)));
-    let language = Language::English;
-    let mut excel = Excel::new(ironworks).with_default_language(language);
+    let mut excel = Excel::new(ironworks);
 
     // Skip sheets without schemas (quest/, custom/, etc.)
     let skip_sheet_regex = Regex::new(r"\/").unwrap();
@@ -50,7 +49,9 @@ fn main() -> Result<(), Box<dyn Error>> {
     //     export::sheet(&excel, language, &String::from("Mount"))?;
     // }
 
-    // export::sheet(&excel, &language, "Mount")?;
+    // let language = Language::English;
+    // excel.set_default_language(language);
+    // export::sheet(&excel, language, "Mount")?;
 
     Ok(())
 }
