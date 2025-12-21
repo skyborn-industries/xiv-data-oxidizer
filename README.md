@@ -10,9 +10,8 @@ Game data is parsed using the schemas provided by EXDSchema which is included as
 ## Usage
 ```
 git clone --recurse-submodules https://github.com/mattantonelli/xiv-data-oxidizer
-cp config.yml.example config.yml
-# Configure your game directory
-cargo run
+# Update the following command with your game path as needed
+cargo run -- "C:\Program Files (x86)\Square Enix\FINAL FANTASY XIV - A Realm Reborn"
 ```
 
 ---

@@ -1,5 +1,5 @@
-use std::error::Error;
 use std::path::Path;
+use std::{env, error::Error};
 
 use ironworks::{
     Ironworks,
@@ -8,7 +8,6 @@ use ironworks::{
 };
 use regex::Regex;
 
-mod config;
 mod exd_schema;
 mod export;
 mod formatter;
@@ -21,8 +20,8 @@ const LANGUAGES: [Language; 4] = [
 ];
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let config = config::read().expect("Could not read config");
-    let path = Path::new(&config.path);
+    let args: Vec<String> = env::args().collect();
+    let path = Path::new(&args[1]);
 
     let ironworks = Ironworks::new().with_resource(SqPack::new(Install::at(path)));
     let mut excel = Excel::new(ironworks);
