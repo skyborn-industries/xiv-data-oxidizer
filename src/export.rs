@@ -26,7 +26,7 @@ pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), 
 
     // Set up the output file
     let language_code = language_code(&language);
-    let path = format!("output/{}.{}.csv", sheet_name, language_code);
+    let path = format!("output/{}/{}.csv", language_code, sheet_name);
     let mut writer = Writer::from_path(path)?;
 
     // Write the field names header
