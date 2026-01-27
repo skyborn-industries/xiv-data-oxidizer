@@ -21,6 +21,13 @@ const LANGUAGES: [Language; 4] = [
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
+
+    if args.len() < 2 {
+        panic!(
+            "You must provide a game path. For example: cargo run -- \"C:\\Program Files (x86)\\Square Enix\\FINAL FANTASY XIV - A Realm Reborn\""
+        );
+    }
+
     let path = Path::new(&args[1]);
 
     let ironworks = Ironworks::new().with_resource(SqPack::new(Install::at(path)));

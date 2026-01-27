@@ -54,7 +54,13 @@ pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), 
             data.push(field_to_string(&field, &input));
         }
 
-        writer.serialize(data)?;
+        match writer.serialize(data) {
+            Ok(_) => (),
+            Err(err) => panic!(
+                "Error writing output for sheet: {}\n{}\nFor differing field counts, try adding Unknown columns to the schema.",
+                sheet_name, err
+            ),
+        }
     }
 
     writer.flush()?;
