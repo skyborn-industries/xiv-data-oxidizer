@@ -34,7 +34,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let mut excel = Excel::new(ironworks);
 
     // Skip sheets without schemas (quest/, custom/, etc.)
-    let skip_sheet_regex = Regex::new(r"\/").unwrap();
+    let skip_sheet_regex = Regex::new(r"\/")?;
 
     for language in LANGUAGES {
         excel.set_default_language(language);

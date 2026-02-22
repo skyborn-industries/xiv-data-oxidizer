@@ -27,7 +27,8 @@ pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), 
     // Set up the output file
     let language_code = language_code(&language);
     let path = format!("output/{}/{}.csv", language_code, sheet_name);
-    let mut writer = Writer::from_path(path)?;
+    let mut writer =
+        Writer::from_path(&path).expect(format!("Failed to open output file: {}", &path).as_str());
 
     // Write the field names header
     writer.serialize(&field_names)?;
@@ -65,7 +66,9 @@ pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), 
         }
     }
 
-    writer.flush()?;
+    writer
+        .flush()
+        .expect(format!("Failed to write output file: {}", &path).as_str());
 
     return Ok(());
 }
