@@ -38,13 +38,23 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     for language in LANGUAGES {
         excel.set_default_language(language);
+        let sheets = excel.list().expect("Could not retrieve sheet list.");
 
-        for sheet in excel.list().unwrap().iter() {
+        println!(
+            "Exporting {} sheets",
+            export::language_code(&language).to_uppercase()
+        );
+
+        for sheet in sheets.iter() {
             if skip_sheet_regex.is_match(&sheet) {
                 continue;
             }
 
-            export::sheet(&excel, language, &sheet)?;
+            match export::sheet(&excel, language, &sheet) {
+                Ok(_) => (),
+                // Log failed sheets and continue
+                Err(err) => eprintln!("Failed to export {}. {}", sheet, err),
+            }
         }
     }
 

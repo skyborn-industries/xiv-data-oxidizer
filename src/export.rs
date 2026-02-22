@@ -56,10 +56,12 @@ pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), 
 
         match writer.serialize(data) {
             Ok(_) => (),
-            Err(err) => panic!(
-                "Error writing output for sheet: {}\n{}\nFor differing field counts, try adding Unknown columns to the schema.",
-                sheet_name, err
-            ),
+            Err(err) => {
+                return Err(format!(
+                    "{err}. For differing field counts, try adding Unknown columns to the schema.",
+                )
+                .into());
+            }
         }
     }
 
@@ -69,7 +71,7 @@ pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), 
 }
 
 /// Returns a short code for the given language
-fn language_code(language: &Language) -> &str {
+pub fn language_code(language: &Language) -> &str {
     return match language {
         Language::English => "en",
         Language::German => "de",
