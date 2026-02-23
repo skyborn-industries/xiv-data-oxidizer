@@ -13,14 +13,17 @@ Check out [xiv-data](https://github.com/skyborn-industries/xiv-data).
 - Rust 1.87
 - A local installation of FFXIV
 
-## Usage
+## Setup
 
 ```
 git clone --recurse-submodules https://github.com/skyborn-industries/xiv-data-oxidizer
 cd xiv-data-oxidizer
-# Make sure you run this on patch day to fetch the latest schemas
+```
+
+## Usage
+
+```
 git submodule update --remote
-# Update the following command with your game path as needed
 cargo run -- "C:\Program Files (x86)\Square Enix\FINAL FANTASY XIV - A Realm Reborn"
 ```
 
