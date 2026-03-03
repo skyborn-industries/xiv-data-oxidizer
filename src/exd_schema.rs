@@ -43,9 +43,15 @@ impl Default for FieldKind {
 /// Retrieve a list of field names from EXDSchema for the given sheet
 pub fn field_names(sheet_name: &str) -> Result<Vec<String>, Box<dyn Error>> {
     let path = format!("schemas/{}.yml", sheet_name);
-    let file = File::open(&path).expect(format!("Could not find schema: {}", &path).as_str());
-    let schema: Schema =
-        serde_yml::from_reader(file).expect(format!("Failed to parse schema: {}", &path).as_str());
+    let file = match File::open(&path) {
+        Ok(file) => file,
+        Err(_) => return Err(format!("Could not find schema: {path}").into()),
+    };
+
+    let schema: Schema = match serde_yml::from_reader(file) {
+        Ok(schema) => schema,
+        Err(_) => return Err(format!("Failed to parse schema: {path}").into()),
+    };
 
     // Prefer the pending field list when available
     let names: Vec<String> = match schema.pending_fields {
