@@ -1,6 +1,8 @@
 use csv::Writer;
 use ironworks::sestring::format::Input;
 use std::error::Error;
+use std::fs;
+use std::path::Path;
 
 use ironworks::excel::{Excel, Field, Language};
 use ironworks::file::exh::{ColumnDefinition, SheetKind};
@@ -13,9 +15,6 @@ pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), 
     // Set up the Input for parsing sestrings
     let input = Input::new().with_global_parameter(1, String::from("Player Player")); // Player name
 
-    // Retrieve the field names based on EXDSchema
-    let field_names = field_names(sheet_name)?;
-
     // Fetch the sheet data
     let sheet = excel.sheet(sheet_name)?;
     let has_subrows = sheet.kind()? == SheetKind::Subrows;
@@ -27,11 +26,17 @@ pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), 
     // Set up the output file
     let language_code = language_code(&language);
     let path = format!("output/{}/{}.csv", language_code, sheet_name);
+    if let Some(parent) = Path::new(&path).parent() {
+        fs::create_dir_all(parent)?;
+    }
     let mut writer =
         Writer::from_path(&path).expect(format!("Failed to open output file: {}", &path).as_str());
 
-    // Write the field names header
-    writer.serialize(&field_names)?;
+    // Write the field header
+    match field_names(sheet_name)? {
+        Some(names) => writer.serialize(&names)?,
+        None => (),
+    };
 
     // Write the file data
     for row in sheet.into_iter() {

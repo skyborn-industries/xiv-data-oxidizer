@@ -40,12 +40,14 @@ impl Default for FieldKind {
     }
 }
 
-/// Retrieve a list of field names from EXDSchema for the given sheet
-pub fn field_names(sheet_name: &str) -> Result<Vec<String>, Box<dyn Error>> {
+/// Retrieve a list of field names from EXDSchema for the given sheet.
+/// Returns None if no schema file exists.
+pub fn field_names(sheet_name: &str) -> Result<Option<Vec<String>>, Box<dyn Error>> {
     let path = format!("schemas/{}.yml", sheet_name);
     let file = match File::open(&path) {
         Ok(file) => file,
-        Err(_) => return Err(format!("Could not find schema: {path}").into()),
+        Err(err) if err.kind() == std::io::ErrorKind::NotFound => return Ok(None),
+        Err(_) => return Err(format!("Could not read schema file: {path}").into()),
     };
 
     let schema: Schema = match serde_yml::from_reader(file) {
@@ -59,7 +61,7 @@ pub fn field_names(sheet_name: &str) -> Result<Vec<String>, Box<dyn Error>> {
         None => parse_field_names(&schema.fields),
     };
 
-    return Ok(names);
+    return Ok(Some(names));
 }
 
 fn parse_field_names(fields: &Vec<Field>) -> Vec<String> {
