@@ -3,19 +3,12 @@ use std::{env, error::Error};
 
 use ironworks::{
     Ironworks,
-    excel::{Excel, Language},
+    excel::Excel,
     sqpack::{Install, SqPack},
 };
 mod exd_schema;
 mod export;
 mod formatter;
-
-const LANGUAGES: [Language; 4] = [
-    Language::English,
-    Language::German,
-    Language::French,
-    Language::Japanese,
-];
 
 fn main() -> Result<(), Box<dyn Error>> {
     let args: Vec<String> = env::args().collect();
@@ -29,9 +22,10 @@ fn main() -> Result<(), Box<dyn Error>> {
     let path = Path::new(&args[1]);
 
     let ironworks = Ironworks::new().with_resource(SqPack::new(Install::at(path)));
+    let languages = export::available_languages(&ironworks);
     let mut excel = Excel::new(ironworks);
 
-    for language in LANGUAGES {
+    for language in languages {
         excel.set_default_language(language);
         let sheets = excel.list().expect("Could not retrieve sheet list.");
 
@@ -51,7 +45,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Quick debugging for schema updates
 
-    // for language in LANGUAGES {
+    // for language in languages {
     //     excel.set_default_language(language);
     //     export::sheet(&excel, language, &String::from("Mount"))?;
     // }

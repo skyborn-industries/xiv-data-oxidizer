@@ -186,7 +186,7 @@ dependencies = [
 [[package]]
 name = "ironworks"
 version = "0.4.1"
-source = "git+https://github.com/ackwell/ironworks#479f1502ac975becacf33749b2c9a4465dceea77"
+source = "git+https://github.com/ackwell/ironworks#a9b40991b80f7466c2acdfbbe288e4f524a0301a"
 dependencies = [
  "binrw",
  "derivative",

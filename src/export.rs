@@ -1,4 +1,5 @@
 use csv::Writer;
+use ironworks::Ironworks;
 use ironworks::sestring::format::Input;
 use std::error::Error;
 use std::fs;
@@ -78,6 +79,33 @@ pub fn sheet(excel: &Excel, language: Language, sheet_name: &str) -> Result<(), 
     return Ok(());
 }
 
+// Workaround borrowed from boilmaster to check for file existence
+// See: https://github.com/ackwell/boilmaster/blob/main/crates/bm_asset/src/service.rs
+struct FileExists;
+impl ironworks::file::File for FileExists {
+    fn read(_stream: impl ironworks::FileStream) -> Result<Self, ironworks::Error> {
+        Ok(Self)
+    }
+}
+
+/// Returns the languages available to export
+pub fn available_languages(ironworks: &Ironworks) -> Vec<Language> {
+    return ironworks
+        .file::<ironworks::file::exh::ExcelHeader>("exd/Item.exh") // Read the headers from an arbitrary sheet
+        .expect("Could not read available languages from: exd/Item.exh")
+        .languages
+        .into_iter()
+        .map(Language::from)
+        .filter(|language| {
+            // Check if the sheet exists for a given language. The Global version's `EXcelHeader`s indicates all
+            // languages that are supported, even though the files aren't present besides EN, DE, FR, and JA.
+            ironworks
+                .file::<FileExists>(&format!("exd/Item_0_{}.exd", self::language_code(language)))
+                .is_ok()
+        })
+        .collect();
+}
+
 /// Returns a short code for the given language
 pub fn language_code(language: &Language) -> &str {
     return match language {
@@ -85,9 +113,9 @@ pub fn language_code(language: &Language) -> &str {
         Language::German => "de",
         Language::French => "fr",
         Language::Japanese => "ja",
-        Language::Korean => "kr",
         Language::ChineseSimplified => "chs",
-        Language::ChineseTraditional => "cht",
+        Language::Korean => "ko",
+        Language::ChineseTraditional => "tc",
         _ => "??",
     };
 }
